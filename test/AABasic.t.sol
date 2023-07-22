@@ -4,6 +4,7 @@ pragma solidity ^0.8.19;
 import "forge-std/Test.sol";
 import "../src/AABasic.sol";
 import "forge-std/console.sol";
+import "openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 
 
 contract AABasicTest is Test {
@@ -12,6 +13,7 @@ contract AABasicTest is Test {
 
     event Executed(address indexed dest, uint256 value, bytes func);
     AABasic public aa;
+    event ggg(bytes data);
 
     function setUp() external {
         vm.createSelectFork('https://polygon.llamarpc.com');
@@ -25,7 +27,12 @@ contract AABasicTest is Test {
         uint256 balance = USDC.balanceOf(address(aa));
         console.log("balance: %s", balance);
         vm.expectEmit(true, false, false, true);
-        emit Executed(address(10), 100 ether, bytes("hello"));
-        aa.execute(address(10), 100 ether, bytes("hello"));
+        bytes4 func = bytes4(keccak256("transfer(address,uint256)"));
+        bytes memory data = abi.encodeWithSelector(func, USDC_HOLDER, 1);
+        emit ggg(data);
+        // emit Executed(address(USDC), 0, data);
+        // aa.execute(address(USDC), 0, data);
+        // balance = USDC.balanceOf(address(aa));
+        // console.log("balance: %s", balance);
     }
 }
